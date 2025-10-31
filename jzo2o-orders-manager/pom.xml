@@ -96,7 +96,10 @@
             <groupId>com.jzo2o</groupId>
             <artifactId>jzo2o-es</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.jzo2o</groupId>
+            <artifactId>jzo2o-sentinel</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

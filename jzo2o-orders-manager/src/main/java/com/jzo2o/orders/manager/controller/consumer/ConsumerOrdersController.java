@@ -53,4 +53,11 @@ public class ConsumerOrdersController {
                                                      @RequestParam(value = "sortBy", required = false) Long sortBy) {
         return ordersManagerService.consumerQueryList(UserContext.currentUserId(), ordersStatus, sortBy);
     }
+    @Resource
+    private IOrdersCreateService ordersCreateService;
+    @ApiOperation("下单接口")
+    @PostMapping("/place")
+    public PlaceOrderResDTO place(@RequestBody PlaceOrderReqDTO placeOrderReqDTO) {
+        return ordersCreateService.placeOrder(placeOrderReqDTO);
+    }
 }
