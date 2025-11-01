@@ -30,5 +30,25 @@ import java.util.List;
 public interface IOrdersCreateService extends IService<Orders> {
      PlaceOrderResDTO placeOrder(PlaceOrderReqDTO placeOrderReqDTO);
     void add(Orders orders);
-
+    /**
+     * 订单支付
+     *
+     * @param id              订单id
+     * @param ordersPayReqDTO 订单支付请求体
+     * @return 订单支付响应体
+     */
+    OrdersPayResDTO pay(Long id, OrdersPayReqDTO ordersPayReqDTO);
+    /**
+     * 请求支付服务查询支付结果
+     *
+     * @param id 订单id
+     * @return 订单支付结果
+     */
+    OrdersPayResDTO getPayResultFromTradServer(Long id);
+    /**
+     * 支付成功， 更新数据库的订单表及其他信息
+     *
+     * @param tradeStatusMsg 交易状态消息
+     */
+    void paySuccess(TradeStatusMsg tradeStatusMsg);
 }
