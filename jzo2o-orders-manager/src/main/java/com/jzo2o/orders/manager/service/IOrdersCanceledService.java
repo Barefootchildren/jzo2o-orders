@@ -2,6 +2,7 @@ package com.jzo2o.orders.manager.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.jzo2o.orders.base.model.domain.OrdersCanceled;
+import com.jzo2o.orders.manager.model.dto.OrderCancelDTO;
 
 /**
  * <p>
@@ -12,5 +13,4 @@ import com.jzo2o.orders.base.model.domain.OrdersCanceled;
  * @since 2023-08-19
  */
 public interface IOrdersCanceledService extends IService<OrdersCanceled> {
-
 }

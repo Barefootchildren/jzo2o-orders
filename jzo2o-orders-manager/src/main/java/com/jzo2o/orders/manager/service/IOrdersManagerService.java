@@ -61,5 +61,10 @@ public interface IOrdersManagerService extends IService<Orders> {
      * @param ordersId 订单id
      */
     void evaluationOrder(Long ordersId);
-
+    /**
+     * 取消订单
+     *
+     * @param orderCancelDTO 取消订单模型
+     */
+    void cancel(OrderCancelDTO orderCancelDTO);
 }

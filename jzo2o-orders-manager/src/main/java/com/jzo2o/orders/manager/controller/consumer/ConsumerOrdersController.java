@@ -43,6 +43,7 @@ public class ConsumerOrdersController {
     public OrderResDTO detail(@PathVariable("id") Long id) {
         return ordersManagerService.getDetail(id);
     }
+
     @GetMapping("/consumerQueryList")
     @ApiOperation("订单滚动分页查询")
     @ApiImplicitParams({
@@ -53,13 +54,16 @@ public class ConsumerOrdersController {
                                                      @RequestParam(value = "sortBy", required = false) Long sortBy) {
         return ordersManagerService.consumerQueryList(UserContext.currentUserId(), ordersStatus, sortBy);
     }
+
     @Resource
     private IOrdersCreateService ordersCreateService;
+
     @ApiOperation("下单接口")
     @PostMapping("/place")
     public PlaceOrderResDTO place(@RequestBody PlaceOrderReqDTO placeOrderReqDTO) {
         return ordersCreateService.placeOrder(placeOrderReqDTO);
     }
+
     @PutMapping("/pay/{id}")
     @ApiOperation("订单支付")
     @ApiImplicitParams({
@@ -68,6 +72,7 @@ public class ConsumerOrdersController {
     public OrdersPayResDTO pay(@PathVariable("id") Long id, @RequestBody OrdersPayReqDTO ordersPayReqDTO) {
         return ordersCreateService.pay(id, ordersPayReqDTO);
     }
+
     @GetMapping("/pay/{id}/result")
     @ApiOperation("查询订单支付结果")
     @ApiImplicitParams({
@@ -75,5 +80,16 @@ public class ConsumerOrdersController {
     })
     public OrdersPayResDTO payResult(@PathVariable("id") Long id) {
         return ordersCreateService.getPayResultFromTradServer(id);
+    }
+
+    @PutMapping("/cancel")
+    @ApiOperation("取消订单")
+    public void cancel(@RequestBody OrderCancelReqDTO orderCancelReqDTO) {
+        OrderCancelDTO orderCancelDTO = BeanUtil.toBean(orderCancelReqDTO, OrderCancelDTO.class);
+        CurrentUserInfo currentUserInfo = UserContext.currentUser();
+        orderCancelDTO.setCurrentUserId(currentUserInfo.getId());
+        orderCancelDTO.setCurrentUserName(currentUserInfo.getName());
+        orderCancelDTO.setCurrentUserType(currentUserInfo.getUserType());
+        ordersManagerService.cancel(orderCancelDTO);
     }
 }

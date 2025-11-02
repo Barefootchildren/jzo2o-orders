@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.jzo2o.common.constants.ErrorInfo.Code.TRADE_FAILED;
 import static com.jzo2o.orders.base.constants.RedisConstants.Lock.ORDERS_SHARD_KEY_ID_GENERATOR;
@@ -278,6 +279,15 @@ private CustomerClient customerClient;
             log.info("支付成功通知："+orders.getId()+"更新订单失败");
             throw new CommonException("支付成功通知："+orders.getId()+"更新订单失败");
         }
+    }
+
+    @Override
+    public List<Orders> queryOverTimePayOrdersListByCount(Integer count) {
+        return lambdaQuery()
+                .eq(Orders::getOrdersStatus, OrderStatusEnum.NO_PAY.getStatus())
+                .lt(Orders::getCreateTime, LocalDateTime.now().minusMinutes(15))
+                .last("limit " + count)
+                .list();
     }
 
 

@@ -51,4 +51,11 @@ public interface IOrdersCreateService extends IService<Orders> {
      * @param tradeStatusMsg 交易状态消息
      */
     void paySuccess(TradeStatusMsg tradeStatusMsg);
+    /**
+     * 查询超时订单id列表
+     *
+     * @param count 数量
+     * @return 订单id列表
+     */
+    public List<Orders> queryOverTimePayOrdersListByCount(Integer count);
 }
