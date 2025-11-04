@@ -15,8 +15,10 @@ import com.jzo2o.common.enums.EnableStatusEnum;
 import com.jzo2o.common.expcetions.CommonException;
 import com.jzo2o.common.utils.BeanUtils;
 import com.jzo2o.common.utils.ObjectUtils;
+import com.jzo2o.orders.base.config.OrderStateMachine;
 import com.jzo2o.orders.base.enums.OrderPayStatusEnum;
 import com.jzo2o.orders.base.enums.OrderRefundStatusEnum;
+import com.jzo2o.orders.base.enums.OrderStatusChangeEventEnum;
 import com.jzo2o.orders.base.enums.OrderStatusEnum;
 import com.jzo2o.orders.base.mapper.OrdersMapper;
 import com.jzo2o.orders.base.model.domain.Orders;
@@ -206,7 +208,13 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
         ordersCanceledService.save(ordersCanceled);
 
         //更新订单状态为已取消，并设置退款状态为退款中
-        OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
+        OrderSnapshotDTO orderSnapshotDTO = OrderSnapshotDTO.builder()
+                .payTime(LocalDateTime.now())
+                .tradingOrderNo(orderCancelDTO.getId())
+                .thirdOrderId(String.valueOf(orderCancelDTO.getTradingOrderNo()))
+                .build();
+        orderStateMachine.changeStatus(orderCancelDTO.getUserId(),String.valueOf(orderCancelDTO.getId()), OrderStatusChangeEventEnum.CANCEL,orderSnapshotDTO);
+       /* OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
                 .id(orderCancelDTO.getId())
                 .originStatus(OrderStatusEnum.DISPATCHING.getStatus())
                 .targetStatus(OrderStatusEnum.CANCELED.getStatus())
@@ -215,7 +223,7 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
         Integer result = ordersCommonService.updateStatus(orderUpdateStatusDTO);
         if (result <= 0) {
             throw new CommonException("待服务订单关闭事件处理失败");
-        }
+        }*/
 
         //保存订单退款记录
         OrdersRefund ordersRefund = new OrdersRefund();
@@ -231,7 +239,8 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
     private IOrdersCanceledService ordersCanceledService;
     @Resource
     private IOrdersCommonService ordersCommonService;
-
+    @Resource
+    private OrderStateMachine orderStateMachine;
     /**
      * 取消未支付订单
      *
@@ -248,7 +257,13 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
         ordersCanceledService.save(ordersCanceled);
 
         // 更新订单状态从未支付到已取消
-        OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
+        OrderSnapshotDTO orderSnapshotDTO = OrderSnapshotDTO.builder()
+                .payTime(LocalDateTime.now())
+                .tradingOrderNo(orderCancelDTO.getId())
+                .thirdOrderId(String.valueOf(orderCancelDTO.getTradingOrderNo()))
+                .build();
+        orderStateMachine.changeStatus(orderCancelDTO.getUserId(),String.valueOf(orderCancelDTO.getId()), OrderStatusChangeEventEnum.CANCEL,orderSnapshotDTO);
+/*        OrderUpdateStatusDTO orderUpdateStatusDTO = OrderUpdateStatusDTO.builder()
                 .id(orderCancelDTO.getId())
                 .originStatus(OrderStatusEnum.NO_PAY.getStatus())
                 .targetStatus(OrderStatusEnum.CANCELED.getStatus())
@@ -258,7 +273,7 @@ public class OrdersManagerServiceImpl extends ServiceImpl<OrdersMapper, Orders> 
         // 检查订单状态更新结果，失败则抛出异常
         if (result <= 0) {
             throw new CommonException("订单取消事件处理失败");
-        }
+        }*/
     }
 
 }
